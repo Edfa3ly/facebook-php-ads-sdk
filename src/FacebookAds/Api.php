@@ -61,6 +61,8 @@ class Api {
    * @var string
    */
   protected $defaultGraphVersion;
+  
+  private static $enableAppSecretProof = true;
 
   /**
    * @param Client $http_client
@@ -92,6 +94,13 @@ class Api {
    */
   public static function instance() {
     return static::$instance;
+  }
+  
+  /**
+   * @param $enableAppSecretProof
+   */
+  public static function enableAppSecretProof($enableAppSecretProof) {
+    self::$enableAppSecretProof = $enableAppSecretProof;
   }
 
   /**
@@ -137,7 +146,9 @@ class Api {
       $params_ref->enhance($params);
     }
     $params_ref['access_token'] = $this->getSession()->getAccessToken();
-    $params_ref['appsecret_proof'] = $this->getSession()->getAppSecretProof();
+    if (self::$enableAppSecretProof) {
+      $params_ref['appsecret_proof'] = $this->getSession()->getAppSecretProof();
+    }
 
     return $request;
   }
